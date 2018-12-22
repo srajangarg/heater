@@ -1,0 +1,3 @@
+cron already exists / clashes
+add no_update_plug_status flag to index + 'err_string'
+datetime offset

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load staticfiles %}
+    <title>Result!</title>
+    <link type="text/css" rel="stylesheet" href="{% static "css/materialize.css" %}"  media="screen,projection"/>
+  </head>
+
+  <body>
+
+    <div class="section no-pad-bot" id="index-banner">
+      <div class="container">
+        
+        <div class="row center">
+
+          <div class="col s6">
+            <div class="row" style="font-size: 125%">Your heater is currently:</div>
+            <div class="row">
+              <div class="col s5 offset-s1">
+                <h2 class="{{plug_vars.1}}-text" style="display: inline">{{plug_vars.0}}</h2><h7 class="light" style="display: inline">({{last_updated_status}})</h7>
+              </div>
+              <div class="col s4">
+            <h5 class="header"> </h5><h5 style="display: inline"><a class="{{plug_vars.2}}-text" href="/cronner/toggle">    Switch {{plug_vars.3}}? </a></h5>
+          
+              </div>
+            </div>
+
+          </div>
+
+          <div class="col s6">
+          <span style="float:left; font-size: 150%" class="text">Add new crons:</span><br><br>
+          <form action="/cronner/add_cron" method="post">
+            {% csrf_token %}
+          <div class="row">
+            <div class="input-field col s2">
+              <input placeholder="00:30" type="text" class="timepicker" name="time" value="00:00">
+              <label>Time</label>
+            </div>
+            <div class="input-field col s2">
+              <select name="action">
+                <option value="ON">ON</option>
+                <option value="OFF">OFF</option>
+              </select>
+              <label>Action</label>
+            </div>
+            <div class="input-field col s2 offset-s1">
+              <input type="number" min="1" max="12" name="num_repeat" value="1">
+              <label>Num Crons</label>
+            </div>
+            <div class="input-field col s2">
+              <input placeholder="00:30" type="text" class="timepicker" name="repeat_time" value="01:00">
+              <label>Offset</label>
+            </div>
+            <div class="col s2">
+              <button type="submit" id="submit-button" class="btn-large teal">Add</button>
+            </div>
+          </div>
+          </div>
+        </div>
+
+        <!-- <p style="float:left; font-size: 150%" class="text">Existing crons:</p> -->
+        <div class="row center">
+
+          <div class="col s6">
+            <table class= "center">
+                <thead>
+                  <tr>
+                      <th data-field="roll">Hour</th>
+                      <th data-field="name">Minute</th>
+                      <th data-field="old">Action</th>
+                      <th data-field="new">Status</th>
+                      <th data-field="del">Remove</th>
+                  </tr>
+                </thead>
+
+                    <tbody>
+
+                      {% for curr in enabled %}
+                       <tr>
+                         <td>{{curr.0}}</td>
+                         <td>{{curr.1}}</td>
+                         <td>{{curr.2}}</td>
+                         <td><span class="teal-text">Active </span><a class="red-text" style="font-size: 75%" href="/cronner/disable_cron?hr={{curr.0}}&min={{curr.1}}&action={{curr.2}}">(Disable?)</a</td>
+                         <td><a class="black-text" href="/cronner/delete_cron?hr={{curr.0}}&min={{curr.1}}">Delete</a</td>
+                       </tr>
+                      {% endfor %}
+                      
+                    </tbody>
+            </table>
+          </div>
+          <div class="col s6">
+            <table class= "center">
+                <thead>
+                  <tr>
+                      <th data-field="roll">Hour</th>
+                      <th data-field="name">Minute</th>
+                      <th data-field="old">Action</th>
+                      <th data-field="new">Status</th>
+                      <th data-field="del">Remove</th>
+                  </tr>
+                </thead>
+
+                    <tbody>
+                      {% for curr in disabled %}
+                       <tr>
+                         <td>{{curr.0}}</td>
+                         <td>{{curr.1}}</td>
+                         <td>{{curr.2}}</td>
+                         <td><span class="red-text">Inactive </span><a class="teal-text" style="font-size: 75%" href="/cronner/enable_cron?hr={{curr.0}}&min={{curr.1}}&action={{curr.2}}">(Enable?)</a></td>
+                         <td><a class="black-text" href="/cronner/delete_cron?hr={{curr.0}}&min={{curr.1}}">Delete</a></td>
+                       </tr>
+                      {% endfor %}
+                      
+                    </tbody>
+            </table>
+          </div>
+
+        </div>       
+
+      </div>
+
+    </div>
+
+
+    <!--Import jQuery before materialize.js-->
+    <script type="text/javascript" src="{% static "js/jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/materialize.min.js" %}"></script>
+
+    <script type="text/javascript">
+      document.addEventListener('DOMContentLoaded', function() {
+        var elems = document.querySelectorAll('.timepicker');
+        var instances = M.Timepicker.init(elems, {'twelveHour' : false});
+
+        var elems = document.querySelectorAll('select');
+        var instances = M.FormSelect.init(elems);
+      });
+
+    </script>
+
+  </body>
+</html>						
